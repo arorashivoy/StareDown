@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <stroke
+        android:width="3dp"
+        android:color="#F44336" />
+    <corners
+        android:topLeftRadius="16dp"
+        android:topRightRadius="16dp"
+        android:bottomLeftRadius="16dp"
+        android:bottomRightRadius="16dp" />
+</shape>
+
+<!--<vector xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:width="32dp"-->
+<!--    android:height="32dp"-->
+<!--    android:viewportWidth="100"-->
+<!--    android:viewportHeight="100">-->
+
+<!--    &lt;!&ndash; Extended arc for top-left corner with rounded ends &ndash;&gt;-->
+<!--    <path-->
+<!--        android:pathData="M90,10 A70,70 0 0,0 10,90"-->
+<!--        android:strokeWidth="10"-->
+<!--        android:strokeColor="#FFFFFF"-->
+<!--        android:fillColor="@android:color/transparent"-->
+<!--        android:strokeLineCap="round"-->
+<!--        android:strokeLineJoin="round" />-->
+<!--</vector>-->
+
+<!--<vector xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:width="32dp"-->
+<!--    android:height="32dp"-->
+<!--    android:viewportWidth="100"-->
+<!--    android:viewportHeight="100">-->
+
+<!--    <path-->
+<!--        android:pathData="M85,15 A70,70 0 0,0 15,85"-->
+<!--        android:strokeWidth="10"-->
+<!--        android:strokeColor="#FFFFFF"-->
+<!--        android:fillColor="@android:color/transparent"-->
+<!--        android:strokeLineCap="round"-->
+<!--        android:strokeLineJoin="round"/>-->
+<!--</vector>-->
