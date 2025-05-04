@@ -62,6 +62,7 @@ class SinglePlayerActivity : AppCompatActivity() {
             val lp = window.attributes
             val brightness = (event.values[0] / 1000).coerceIn(0.1f, 1.0f)
             lp.screenBrightness = brightness
+            lp.screenBrightness = 0.8f
             window.attributes = lp
         }
 
@@ -120,6 +121,8 @@ class SinglePlayerActivity : AppCompatActivity() {
         cameraStarted = true
         cameraStopped = false
         blinked = false
+
+        setScreenBrightness(0.8f)
 
         // Hide orange overlay and show camera
         findViewById<View>(R.id.coverOverlay)?.visibility = View.GONE
@@ -326,5 +329,11 @@ class SinglePlayerActivity : AppCompatActivity() {
             val leader = Leader(username, newScore, 0, 0)
             dbRef.setValue(leader)
         }
+    }
+
+    private fun setScreenBrightness(brightness: Float) {
+        val lp = window.attributes
+        lp.screenBrightness = brightness // value between 0.0f (dim) and 1.0f (bright)
+        window.attributes = lp
     }
 }
