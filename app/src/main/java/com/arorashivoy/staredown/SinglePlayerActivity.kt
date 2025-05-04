@@ -1,7 +1,11 @@
 package com.arorashivoy.staredown
-
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,82 +13,182 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import java.util.Locale
 
-class SinglePlayerActivity: AppCompatActivity() {
+class SinglePlayerActivity : AppCompatActivity() {
+
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var updateRunnable: Runnable
 
+    private lateinit var username: String
     private lateinit var previewView: PreviewView
-    private lateinit var blinkInfo: TextView
+    private lateinit var blinkResult: TextView
     private lateinit var startBtn: Button
-    private lateinit var redCameraCorners: View
-    private lateinit var greenCameraCorners: View
+    private lateinit var countdownText: TextView
+    private lateinit var sensorManager: SensorManager
+    private var proximitySensor: Sensor? = null
+    private var lightSensor: Sensor? = null
+
     private var cameraStarted = false
     private var cameraStopped = false
     private var startTime = 0L
     private var blinked = false
 
+    private val proximityListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            if (event.values[0] >= proximitySensor?.maximumRange ?: 5f) {
+                Toast.makeText(this@SinglePlayerActivity, "Move closer to the camera!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
+
+    private val lightListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val lp = window.attributes
+            val brightness = (event.values[0] / 1000).coerceIn(0.1f, 1.0f)
+            lp.screenBrightness = brightness
+            window.attributes = lp
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContentView(R.layout.activity_single_player)
 
+        username = intent.getStringExtra("username") ?: "unknown"
 
+        // View initialization
         previewView = findViewById(R.id.previewView)
-        blinkInfo = findViewById(R.id.blinkInfo)
+        blinkResult = findViewById(R.id.blinkResult)
         startBtn = findViewById(R.id.startBtn)
-//        redCameraCorners = findViewById(R.id.redCameraCorners)
-//        greenCameraCorners = findViewById(R.id.greenCameraCorners)
+        countdownText = findViewById(R.id.countdownText)
 
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+
+        // Ask for camera permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
             RequestCamera.newInstance().show(supportFragmentManager, "RequestCamera")
         }
-        else {
-            startCamera()
+
+        // Start button triggers countdown first
+        startBtn.setOnClickListener {
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                RequestCamera.newInstance().show(supportFragmentManager, "RequestCamera")
+                return@setOnClickListener
+            }
+
+
+            startBtn.visibility = View.GONE
+            blinkResult.visibility = View.VISIBLE
+            startCountdownAndStartCamera()
         }
 
-        startBtn.setOnClickListener{
-            startTime = System.currentTimeMillis()
-            cameraStarted = true
-            cameraStopped = false
-            blinked = false
+    }
 
-            updateRunnable = object : Runnable {
-                override fun run() {
-                    if (!blinked && cameraStarted) {
-                        val elapsed = System.currentTimeMillis() - startTime
-                        val minutes = elapsed / 60000
-                        val seconds = (elapsed % 60000) / 1000
-                        val millis = elapsed % 1000
-                        blinkInfo.text = String.format(
-                            Locale.US,
-                            "Time elapsed: %02d:%02d:%03d",
-                            minutes, seconds, millis
-                        )
-                        handler.postDelayed(this, 50) // update every 50ms
-                    }
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(proximityListener)
+        sensorManager.unregisterListener(lightListener)
+    }
+
+    private fun beginBlinkTimer() {
+        startTime = System.currentTimeMillis()
+        cameraStarted = true
+        cameraStopped = false
+        blinked = false
+
+        // Hide orange overlay and show camera
+        findViewById<View>(R.id.coverOverlay)?.visibility = View.GONE
+
+        // Start camera
+        startCamera()
+
+        proximitySensor?.let {
+            sensorManager.registerListener(proximityListener, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+
+        lightSensor?.let {
+            sensorManager.registerListener(lightListener, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+
+
+        // Start live blink info update
+        updateRunnable = object : Runnable {
+            override fun run() {
+                if (!blinked && cameraStarted) {
+                    val elapsed = System.currentTimeMillis() - startTime
+                    val minutes = elapsed / 60000
+                    val seconds = (elapsed % 60000) / 1000
+                    val millis = elapsed % 1000
+                    blinkResult.text = String.format(
+                        Locale.US, "%02d:%02d:%03d", minutes, seconds, millis
+                    )
+                    handler.postDelayed(this, 50)
                 }
             }
-            handler.post(updateRunnable)
         }
+
+        handler.post(updateRunnable)
     }
+
+    private fun startCountdownAndStartCamera() {
+        val countdownValues = listOf("3", "2", "1")
+        var index = 0
+
+        // Show countdown text in center
+        countdownText.visibility = View.VISIBLE
+
+        // Optional: Show orange overlay while camera is hidden
+        findViewById<View>(R.id.coverOverlay)?.visibility = View.VISIBLE
+
+        val countdownRunnable = object : Runnable {
+            override fun run() {
+                if (index < countdownValues.size) {
+                    countdownText.text = countdownValues[index]
+                    countdownText.scaleX = 0f
+                    countdownText.scaleY = 0f
+                    countdownText.animate()
+                        .scaleX(1f).scaleY(1f)
+                        .setDuration(400)
+                        .withEndAction {
+                            index++
+                            handler.postDelayed(this, 600)
+                        }.start()
+                } else {
+                    countdownText.visibility = View.GONE
+                    beginBlinkTimer()
+                }
+            }
+        }
+
+        handler.post(countdownRunnable)
+    }
+
+
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -121,9 +225,8 @@ class SinglePlayerActivity: AppCompatActivity() {
                 .build()
         )
 
-        @OptIn(ExperimentalGetImage::class)
+        @androidx.annotation.OptIn(ExperimentalGetImage::class)
         override fun analyze(imageProxy: ImageProxy) {
-
             val mediaImage = imageProxy.image ?: run {
                 imageProxy.close()
                 Log.d("SHIVOY", "ImageProxy is null")
@@ -134,15 +237,10 @@ class SinglePlayerActivity: AppCompatActivity() {
             detector.process(image)
                 .addOnSuccessListener { faces ->
                     if (faces.isEmpty()) {
-                        // TODO: Add view of no face detected maybe make corners red
                         Log.d("SHIVOY", "No faces detected")
-//                        greenCameraCorners.visibility = View.GONE
-//                        redCameraCorners.visibility = View.VISIBLE
+                        Toast.makeText(this@SinglePlayerActivity, "Face not detected", Toast.LENGTH_SHORT).show()
+                        blinkDetected()
                         return@addOnSuccessListener
-                    } else {
-                        Log.d("SHIVOY", "Faces detected: ${faces.size}")
-//                        redCameraCorners.visibility = View.GONE
-//                        greenCameraCorners.visibility = View.VISIBLE
                     }
 
                     if (!cameraStarted) {
@@ -154,16 +252,11 @@ class SinglePlayerActivity: AppCompatActivity() {
                         val leftEyeOpen = face.leftEyeOpenProbability ?: 1f
                         val rightEyeOpen = face.rightEyeOpenProbability ?: 1f
 
-//                        Log.d("SHIVOY", "Face detected: $face")
-
-//                        Log.d("SHIVOY", "Left Eye Open: $leftEyeOpen, Right Eye Open: $rightEyeOpen")
-
                         val isCurrentlyBlinking = leftEyeOpen < 0.3f && rightEyeOpen < 0.3f
 
                         if (isCurrentlyBlinking && !blinked && !cameraStopped) {
                             blinkDetected()
                         }
-
                     }
                 }
                 .addOnFailureListener { /* ignore */ }
@@ -176,17 +269,23 @@ class SinglePlayerActivity: AppCompatActivity() {
         cameraStopped = true
 
         val blinkDuration = System.currentTimeMillis() - startTime
-        val minutes = blinkDuration / 60000
-        val seconds = (blinkDuration % 60000) / 1000
-        val millis = blinkDuration % 1000
+
+        pushToLeaderboard(blinkDuration)
 
         runOnUiThread {
             handler.removeCallbacks(updateRunnable)
-            blinkInfo.text = String.format(
-                Locale.US,
-                "Blink detected!\nTime: %02d:%02d:%03d",
-                minutes, seconds, millis
-            )
+            sensorManager.unregisterListener(proximityListener)
+            sensorManager.unregisterListener(lightListener)
+
+            blinkResult.text = "Blink Detected!"
+            // Move to next screen after short delay
+            handler.postDelayed({
+                val intent = Intent(this, ResultActivity::class.java)
+                    .putExtra("blinkTime", blinkDuration)
+                    .putExtra("username", username)
+                startActivity(intent)
+            }, 1500)  // delay 1.5 seconds to let user read the message
+
         }
 
         // Unbind camera to freeze frame
@@ -196,4 +295,36 @@ class SinglePlayerActivity: AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this@SinglePlayerActivity))
     }
 
+    private fun pushToLeaderboard(newScore: Long) {
+        Log.d("SHIVOY", "Pushing to db")
+        val dbRef = Firebase.database.reference.child("leaderboard").child(username)
+
+        dbRef.get().addOnSuccessListener { snapshot ->
+            val existing = snapshot.getValue(Leader::class.java)
+
+            val topScores = mutableListOf<Long>()
+            existing?.let {
+                topScores.add(it.score)
+                topScores.add(it.score2)
+                topScores.add(it.score3)
+            }
+
+            topScores.add(newScore)
+            topScores.sortDescending()  // Highest first
+
+            val updatedLeader = Leader(
+                username = username,
+                score = topScores.getOrElse(0) { 0 },
+                score2 = topScores.getOrElse(1) { 0 },
+                score3 = topScores.getOrElse(2) { 0 }
+            )
+
+            dbRef.setValue(updatedLeader)
+        }.addOnFailureListener {
+            Log.e("SHIVOY", "Failed to fetch existing scores", it)
+            // In case of error, save new score as top1
+            val leader = Leader(username, newScore, 0, 0)
+            dbRef.setValue(leader)
+        }
+    }
 }

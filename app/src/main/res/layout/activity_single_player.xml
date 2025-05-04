@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cream"
     android:padding="16dp">
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/container"
+        android:layout_marginTop="100dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipChildren="true"
-        android:clipToPadding="true"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="50dp"
+        app:cardBackgroundColor="@color/orange"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintDimensionRatio="1:1.65"
         app:layout_constraintHeight_percent="0.575">
 
         <androidx.camera.view.PreviewView
@@ -23,91 +28,304 @@
             android:layout_height="match_parent"
             app:scaleType="fitCenter" />
 
-<!--        <View-->
-<!--            android:id="@+id/redCameraCorners"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_marginHorizontal="20dp"-->
-<!--            android:layout_marginVertical="8dp"-->
-<!--            android:padding="16dp"-->
-<!--            android:background="@drawable/red_corner_shape" />-->
+        <View
+            android:id="@+id/coverOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/orange" />
 
-<!--        <View-->
-<!--            android:id="@+id/greenCameraCorners"-->
-<!--            android:visibility="gone"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_marginHorizontal="20dp"-->
-<!--            android:layout_marginVertical="8dp"-->
-<!--            android:padding="16dp"-->
-<!--            android:background="@drawable/red_corner_shape" />-->
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Decorative Stars (Left & Right) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@id/container"
+        app:layout_constraintBottom_toBottomOf="@id/container"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- First star (no top margin) -->
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/star" />
+
+        <!-- Remaining stars with 40dp spacing -->
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@id/container"
+        app:layout_constraintBottom_toBottomOf="@id/container"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star"/>
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/star" />
+    </LinearLayout>
 
 
-        <!--            android:backgroundTint="@android:color/holo_red_dark"/>-->
 
-<!--        &lt;!&ndash; Top-left (no rotation needed) &ndash;&gt;-->
-<!--        <View-->
-<!--            android:id="@+id/cornerTopLeft"-->
-<!--            android:layout_width="32dp"-->
-<!--            android:layout_height="32dp"-->
-<!--            android:layout_gravity="top|start"-->
-<!--            android:background="@drawable/corner_shape"-->
-<!--            android:backgroundTint="@android:color/holo_red_dark" />-->
-
-<!--        &lt;!&ndash; Top-right (rotate 90) &ndash;&gt;-->
-<!--        <View-->
-<!--            android:id="@+id/cornerTopRight"-->
-<!--            android:layout_width="32dp"-->
-<!--            android:layout_height="32dp"-->
-<!--            android:layout_gravity="top|end"-->
-<!--            android:background="@drawable/corner_shape"-->
-<!--            android:rotation="90"-->
-<!--            android:backgroundTint="@android:color/holo_red_dark" />-->
-
-<!--        &lt;!&ndash; Bottom-right (rotate 180) &ndash;&gt;-->
-<!--        <View-->
-<!--            android:id="@+id/cornerBottomRight"-->
-<!--            android:layout_width="32dp"-->
-<!--            android:layout_height="32dp"-->
-<!--            android:layout_gravity="bottom|end"-->
-<!--            android:background="@drawable/corner_shape"-->
-<!--            android:rotation="180"-->
-<!--            android:backgroundTint="@android:color/holo_red_dark" />-->
-
-<!--        &lt;!&ndash; Bottom-left (rotate 270) &ndash;&gt;-->
-<!--        <View-->
-<!--            android:id="@+id/cornerBottomLeft"-->
-<!--            android:layout_width="32dp"-->
-<!--            android:layout_height="32dp"-->
-<!--            android:layout_gravity="bottom|start"-->
-<!--            android:background="@drawable/corner_shape"-->
-<!--            android:rotation="270"-->
-<!--            android:backgroundTint="@android:color/holo_red_dark" />-->
-    </FrameLayout>
-
+    <!-- Countdown Text -->
     <TextView
-        android:id="@+id/blinkInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Blink info"
-        android:textSize="18sp"
-        android:background="#AA000000"
-        android:textColor="#FFFFFF"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
-
-    <Button
+        android:id="@+id/countdownText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/startBtn"
-        android:text="Start"
-        app:layout_constraintTop_toBottomOf="@id/blinkInfo"
+        android:text="3"
+        android:textSize="130sp"
+        android:textColor="@color/dark_blue"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        app:layout_constraintTop_toTopOf="@id/container"
+        app:layout_constraintBottom_toBottomOf="@id/container"
+        app:layout_constraintStart_toStartOf="@id/container"
+        app:layout_constraintEnd_toEndOf="@id/container" />
+
+    <!-- Blink Timer Info -->
+    <TextView
+        android:id="@+id/blinkResult"
+        android:layout_width="306dp"
+        android:layout_height="110dp"
+        android:layout_marginBottom="120dp"
+        android:backgroundTint="@color/dark_blue"
+        android:fontFamily="@font/pixelify_sans"
+        android:text="GET READY!!!"
+        android:textAllCaps="false"
+        android:textColor="@color/orange"
+        android:textSize="50sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="36dp"
+        app:layout_constraintTop_toBottomOf="@id/container"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bottom-left Logo -->
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="306dp"
+        android:layout_height="110dp"
+        android:layout_marginBottom="120dp"
+        android:backgroundTint="@color/dark_blue"
+        android:fontFamily="@font/pixelify_sans"
+        android:text="START GAME"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="36dp"
+        app:layout_constraintTop_toBottomOf="@id/container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+<!--    <Button-->
+<!--        android:id="@+id/tryAgainBtn"-->
+<!--        android:layout_width="306dp"-->
+<!--        android:layout_height="110dp"-->
+<!--        android:layout_marginBottom="120dp"-->
+<!--        android:backgroundTint="@color/dark_blue"-->
+<!--        android:fontFamily="@font/pixelify_sans"-->
+<!--        android:text="START GAME"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="35sp"-->
+<!--        android:textStyle="bold"-->
+<!--        tools:layout_editor_absoluteX="36dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/container"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/viewLeaderboardBtn"-->
+<!--        android:layout_width="306dp"-->
+<!--        android:layout_height="110dp"-->
+<!--        android:layout_marginBottom="120dp"-->
+<!--        android:backgroundTint="@color/dark_blue"-->
+<!--        android:fontFamily="@font/pixelify_sans"-->
+<!--        android:text="START GAME"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="35sp"-->
+<!--        android:textStyle="bold"-->
+<!--        tools:layout_editor_absoluteX="36dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/container"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="450dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="-120dp"
+        android:layout_marginBottom="-220dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/logo_desc"
+        android:scaleType="fitStart"
+        android:src="@drawable/halflogo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

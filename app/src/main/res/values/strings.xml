@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StareDown</string>
+    <string name="logo_desc">Staredown logo</string>
+    <string name="gameover">gameOverImage</string>
 </resources>

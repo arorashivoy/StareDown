@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/request_camera"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cameraPermissionLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/dark_blue"
+    android:gravity="center_horizontal"
+    tools:ignore="ExtraText">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:gravity="center"
+    <ImageView
+        android:id="@+id/cameraIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_camera_alt_24"
+        android:layout_marginBottom="16dp"
+        app:tint="@color/cream" />
+
+    <TextView
+        android:id="@+id/permissionMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pixelify_sans"
+        android:text="We need camera access to detect blinks during gameplay."
+        android:textAlignment="center"
+        android:textColor="@color/cream"
+        android:textSize="20sp"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/requestPermissionBtn"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <!--        TODO: Add lotte animation for camera here -->
-
-        <TextView
-            android:id="@+id/permissionText"
-            android:text="Camera access is required\nPress the Below Button to give access"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/requestPermissionBtn"
-            android:text="Give Access"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+        android:layout_height="wrap_content"
+        android:text="Grant Camera Access"
+        android:textSize="20sp"
+        android:fontFamily="@font/pixelify_sans"
+        android:backgroundTint="@color/orange"
+        android:textColor="@color/white"
+        android:textAllCaps="false" />
+</LinearLayout>
