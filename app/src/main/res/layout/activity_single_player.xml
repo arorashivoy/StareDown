@@ -232,7 +232,7 @@
         android:textColor="@color/dark_blue"
         android:visibility="gone"
         android:textStyle="bold"
-        android:fontFamily="monospace"
+        android:fontFamily="pixelify_sans"
         app:layout_constraintTop_toTopOf="@id/container"
         app:layout_constraintBottom_toBottomOf="@id/container"
         app:layout_constraintStart_toStartOf="@id/container"
