@@ -27,6 +27,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import java.util.Locale
+import android.speech.tts.TextToSpeech
 
 class SinglePlayerActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class SinglePlayerActivity : AppCompatActivity() {
     private lateinit var sensorManager: SensorManager
     private var proximitySensor: Sensor? = null
     private var lightSensor: Sensor? = null
+    private lateinit var tts: TextToSpeech
 
     private var cameraStarted = false
     private var cameraStopped = false
@@ -73,6 +75,11 @@ class SinglePlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_single_player)
+        tts = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts.language = Locale.US
+            }
+        }
 
         username = intent.getStringExtra("username") ?: "unknown"
 
@@ -116,7 +123,14 @@ class SinglePlayerActivity : AppCompatActivity() {
         sensorManager.unregisterListener(lightListener)
     }
 
+    private fun speak(text: String) {
+        if (::tts.isInitialized) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
+
     private fun beginBlinkTimer() {
+        speak("Game started. Don't blink!")
         startTime = System.currentTimeMillis()
         cameraStarted = true
         cameraStopped = false
@@ -169,8 +183,13 @@ class SinglePlayerActivity : AppCompatActivity() {
         findViewById<View>(R.id.coverOverlay)?.visibility = View.VISIBLE
 
         val countdownRunnable = object : Runnable {
+
             override fun run() {
                 if (index < countdownValues.size) {
+                    if(index == 0)
+                        speak("Starting in ${countdownValues[index]}")
+                    else
+                        speak("${countdownValues[index]}")
                     countdownText.text = countdownValues[index]
                     countdownText.scaleX = 0f
                     countdownText.scaleY = 0f
@@ -279,6 +298,7 @@ class SinglePlayerActivity : AppCompatActivity() {
             handler.removeCallbacks(updateRunnable)
             sensorManager.unregisterListener(proximityListener)
             sensorManager.unregisterListener(lightListener)
+            speak("Blink detected! ohh noooo!")
 
             blinkResult.text = "Blink Detected!"
             // Move to next screen after short delay
@@ -329,11 +349,19 @@ class SinglePlayerActivity : AppCompatActivity() {
             val leader = Leader(username, newScore, 0, 0)
             dbRef.setValue(leader)
         }
+        speak("Your time was ${newScore / 1000} seconds")
     }
 
     private fun setScreenBrightness(brightness: Float) {
         val lp = window.attributes
         lp.screenBrightness = brightness // value between 0.0f (dim) and 1.0f (bright)
         window.attributes = lp
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::tts.isInitialized) {
+            tts.stop()
+            tts.shutdown()
+        }
     }
 }

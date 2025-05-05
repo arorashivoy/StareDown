@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,7 +26,7 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     private lateinit var setUsernameBtn: Button
     private lateinit var singlePlayerBtn: Button
-    private lateinit var multiPlayerBtn: Button
+    private lateinit var leaderboardbtn: Button
     private lateinit var database: DatabaseReference
     private var confirmedUsername: String? = null
     private val PREFS_NAME = "StaredownPrefs"
@@ -40,6 +41,16 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001)
+            }
+        }
+
 
         database = Firebase.database.reference.child("leaderboard")
 
@@ -58,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         setUsernameBtn = findViewById(R.id.setUsernameBtn)
         singlePlayerBtn = findViewById(R.id.singlePlayerBtn)
-        multiPlayerBtn = findViewById(R.id.viewLeaderboard)
+        leaderboardbtn = findViewById(R.id.viewLeaderboard)
 
         confirmedUsername = getSavedUsername()
         if (confirmedUsername != null) {
@@ -74,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        multiPlayerBtn.setOnClickListener {
+        leaderboardbtn.setOnClickListener {
             if (confirmedUsername != null) {
                 startActivity(Intent(this, LeaderboardActivity::class.java)
                     .putExtra("username", confirmedUsername))
