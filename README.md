@@ -6,6 +6,8 @@ close, and your time goes on a shared leaderboard.
 
 Android coursework, May 2025. Kotlin and XML views.
 
+**Presentation:** [slides on Canva](https://canva.link/sz63fo5yi20ptl2)
+
 > A screen recording of a round belongs here.
 
 ## How it works
